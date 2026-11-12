@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.biman.ruines.entity.Enemy;
+
 public class Room {
 
     private final String name;
@@ -12,6 +14,7 @@ public class Room {
     private final Map<String, Room> exits = new LinkedHashMap<>();
     private final Set<String> lockedExits = new HashSet<>();
     private Puzzle puzzle;
+    private Enemy enemy;
 
     public Room(String name, String description) {
         this.name = name;
@@ -55,6 +58,14 @@ public class Room {
 
     public Puzzle getPuzzle() {
         return puzzle;
+    }
+
+    public void setEnemy(Enemy enemy) {
+        this.enemy = enemy;
+    }
+
+    public Enemy getEnemy() {
+        return enemy;
     }
 
     public Room getExit(String direction) {

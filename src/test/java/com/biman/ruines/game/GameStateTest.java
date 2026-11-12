@@ -179,4 +179,58 @@ public class GameStateTest {
         assertFalse(gameState.isActive());
         assertTrue(gameState.hasLost());
     }
+
+    @Test
+    void cryptStartsWithACombatEncounter() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+        gameState.answerPuzzle("keyboard");
+        gameState.move("north");
+
+        assertEquals("The Crypt", gameState.getCurrentRoom().getName());
+        assertEquals("Goblin", gameState.getCurrentCombat().getEnemy().getName());
+    }
+
+    @Test
+    void defeatingRoomEnemyRemovesTheEncounter() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+        gameState.answerPuzzle("keyboard");
+        gameState.move("north");
+        gameState.startCombat();
+
+        gameState.getCurrentCombat().attack();
+        gameState.getCurrentCombat().attack();
+        gameState.getCurrentCombat().attack();
+        gameState.resolveCombat();
+
+        assertTrue(gameState.getCurrentCombat() == null);
+        assertTrue(gameState.getCurrentRoom().getEnemy() == null);
+    }
+
+    @Test
+    void fleeingKeepsRoomEnemyAvailable() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+        gameState.answerPuzzle("keyboard");
+        gameState.move("north");
+        gameState.startCombat();
+
+        gameState.getCurrentCombat().flee();
+        gameState.resolveCombat();
+
+        assertTrue(gameState.getCurrentRoom().getEnemy() != null);
+        assertTrue(gameState.startCombat());
+    }
+
+    @Test
+    void playerCannotMoveDuringCombat() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+        gameState.answerPuzzle("keyboard");
+        gameState.move("north");
+        gameState.startCombat();
+
+        assertFalse(gameState.move("south"));
+    }
 }

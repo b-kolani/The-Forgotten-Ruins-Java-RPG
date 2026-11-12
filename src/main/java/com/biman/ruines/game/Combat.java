@@ -10,6 +10,7 @@ public class Combat {
     private final Player player;
     private final Enemy enemy;
     private boolean active;
+    private boolean fled;
 
     public Combat(Player player, Enemy enemy) {
         this.player = player;
@@ -30,6 +31,10 @@ public class Combat {
 
     public boolean isActive() {
         return active;
+    }
+
+    public boolean hasFled() {
+        return fled;
     }
 
     public void attack() {
@@ -76,6 +81,16 @@ public class Combat {
         if (!player.isAlive()) {
             active = false;
         }
+        return true;
+    }
+
+    public boolean flee() {
+        if (!active) {
+            return false;
+        }
+
+        active = false;
+        fled = true;
         return true;
     }
 

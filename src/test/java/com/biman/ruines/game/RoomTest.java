@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.biman.ruines.entity.Enemy;
 import org.junit.jupiter.api.Test;
 
 public class RoomTest {
@@ -75,5 +76,15 @@ public class RoomTest {
         Room entrance = new Room("Entrance", "An entrance.");
 
         assertFalse(entrance.unlockExit("north"));
+    }
+
+    @Test
+    void roomCanContainAnEnemy() {
+        Room crypt = new Room("Crypt", "A dark crypt.");
+        Enemy enemy = new Enemy("Goblin", 40, 8);
+
+        crypt.setEnemy(enemy);
+
+        assertEquals(enemy, crypt.getEnemy());
     }
 }

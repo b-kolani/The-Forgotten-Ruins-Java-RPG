@@ -1,11 +1,13 @@
 package com.biman.ruines.game;
 
 import com.biman.ruines.entity.Player;
+import com.biman.ruines.entity.Enemy;
 
 public class GameState {
 
     private Player player;
     private Room currentRoom;
+    private Combat currentCombat;
     private boolean active;
     private boolean won;
     private boolean lost;
@@ -20,6 +22,10 @@ public class GameState {
 
     public Room getCurrentRoom() {
         return currentRoom;
+    }
+
+    public Combat getCurrentCombat() {
+        return currentCombat;
     }
 
     public boolean isActive() {
@@ -61,7 +67,7 @@ public class GameState {
     }
 
     public boolean move(String direction) {
-        if (!active || direction == null) {
+        if (!active || currentCombat != null || direction == null) {
             return false;
         }
 
@@ -75,6 +81,35 @@ public class GameState {
         }
 
         currentRoom = destination;
+        if ("The Final Sanctuary".equals(currentRoom.getName())) {
+            completeVictory();
+        } else {
+            startCombat();
+        }
+        return true;
+    }
+
+    public boolean startCombat() {
+        if (!active || currentCombat != null || currentRoom.getEnemy() == null) {
+            return false;
+        }
+
+        currentCombat = new Combat(player, currentRoom.getEnemy());
+        return currentCombat.isActive();
+    }
+
+    public boolean resolveCombat() {
+        if (currentCombat == null || currentCombat.isActive()) {
+            return false;
+        }
+
+        if (!player.isAlive()) {
+            completeDefeat();
+        } else if (!currentCombat.getEnemy().isAlive()) {
+            currentRoom.setEnemy(null);
+        }
+
+        currentCombat = null;
         return true;
     }
 
@@ -125,6 +160,7 @@ public class GameState {
             "The Crypt",
             "Cold stone and forgotten coffins fill this dark chamber."
         );
+        crypt.setEnemy(new Enemy("Goblin", 40, 8));
         Room runeMechanism = new Room(
             "The Rune Mechanism",
             "A complex mechanism covered in glowing runes stands before you."

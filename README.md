@@ -58,7 +58,12 @@ behavior, player inventory access, items, inventory management, and a game
 state that supports active, victory, defeat, and new-game lifecycle states.
 The first five-room dungeon layout, connected navigation, locked exits, and
 the first three-attempt riddle puzzle, its damage trap, and basic turn-based
-attack, defense, and potion combat are now in place. Defense reduces the next
-enemy attack by half. Potions restore 25 health and are not consumed when the
-player is already at full health. The console game loop, remaining combat
-actions, and dungeon systems will be added next.
+attack, defense, potion, and flee combat are now in place. Defense reduces the
+next enemy attack by half. Potions restore 25 health and are not consumed when
+the player is already at full health. Fleeing always succeeds without an enemy
+attack. The Crypt now contains a Goblin encounter connected to the game state.
+Combat starts automatically when the player enters the Crypt. The first
+console game loop is now available through the
+`com.biman.ruines.console.ConsoleGame` entry point. The graphical interface and
+remaining presentation improvements will be added later. After a game ends,
+the console asks whether the player wants to start a new game.

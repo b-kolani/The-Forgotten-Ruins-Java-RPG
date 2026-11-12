@@ -136,4 +136,28 @@ public class CombatTest {
         assertEquals(100, player.getHealth());
         assertEquals(40, enemy.getHealth());
     }
+
+    @Test
+    void fleeingEndsCombatWithoutEnemyAttack() {
+        Player player = new Player();
+        Enemy enemy = new Enemy("Goblin", 40, 8);
+        Combat combat = new Combat(player, enemy);
+
+        assertTrue(combat.flee());
+
+        assertFalse(combat.isActive());
+        assertTrue(combat.hasFled());
+        assertEquals(100, player.getHealth());
+        assertEquals(40, enemy.getHealth());
+    }
+
+    @Test
+    void inactiveCombatCannotBeFled() {
+        Combat combat = new Combat(new Player(), new Enemy("Goblin", 10, 8));
+
+        combat.attack();
+
+        assertFalse(combat.flee());
+        assertFalse(combat.hasFled());
+    }
 }
