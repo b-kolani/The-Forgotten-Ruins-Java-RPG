@@ -78,7 +78,7 @@ public class GameStateTest {
         GameState gameState = new GameState();
         Room startingRoom = gameState.getCurrentRoom();
 
-        assertFalse(gameState.move("north"));
+        assertFalse(gameState.move("west"));
         assertEquals(startingRoom, gameState.getCurrentRoom());
     }
 
@@ -89,5 +89,94 @@ public class GameStateTest {
         gameState.completeVictory();
 
         assertFalse(gameState.move("north"));
+    }
+
+    @Test
+    void playerCanMoveThroughConnectedRooms() {
+        GameState gameState = new GameState();
+
+        assertTrue(gameState.move("north"));
+        assertEquals("The Door of Ancients", gameState.getCurrentRoom().getName());
+    }
+
+    @Test
+    void playerCannotMoveThroughLockedExit() {
+        GameState gameState = new GameState();
+
+        gameState.move("north");
+
+        assertTrue(gameState.getCurrentRoom().isExitLocked("north"));
+        assertFalse(gameState.move("north"));
+        assertEquals("The Door of Ancients", gameState.getCurrentRoom().getName());
+    }
+
+    @Test
+    void unlockingAnExitAllowsMovement() {
+        GameState gameState = new GameState();
+
+        gameState.move("north");
+        gameState.answerPuzzle("keyboard");
+
+        assertTrue(gameState.move("north"));
+        assertEquals("The Crypt", gameState.getCurrentRoom().getName());
+    }
+
+    @Test
+    void wrongPuzzleAnswerKeepsExitLocked() {
+        GameState gameState = new GameState();
+
+        gameState.move("north");
+
+        assertFalse(gameState.answerPuzzle("wrong"));
+        assertTrue(gameState.getCurrentRoom().isExitLocked("north"));
+        assertFalse(gameState.move("north"));
+    }
+
+    @Test
+    void hintDoesNotConsumePuzzleAttempt() {
+        GameState gameState = new GameState();
+
+        gameState.move("north");
+
+        assertTrue(gameState.useHint());
+        assertEquals(3, gameState.getCurrentRoom().getPuzzle().getAttemptsRemaining());
+        assertTrue(gameState.getCurrentRoom().getPuzzle().isHintUsed());
+    }
+
+    @Test
+    void thirdIncorrectAnswerTriggersTrapAndResetsPuzzle() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+
+        gameState.answerPuzzle("wrong");
+        gameState.answerPuzzle("wrong");
+        gameState.answerPuzzle("wrong");
+
+        assertEquals(90, gameState.getPlayer().getHealth());
+        assertTrue(gameState.isActive());
+        assertEquals(3, gameState.getCurrentRoom().getPuzzle().getAttemptsRemaining());
+        assertTrue(gameState.getCurrentRoom().isExitLocked("north"));
+    }
+
+    @Test
+    void lethalTrapEndsTheGame() {
+        GameState gameState = new GameState();
+        gameState.move("north");
+        Puzzle puzzle = gameState.getCurrentRoom().getPuzzle();
+
+        Puzzle lethalPuzzle = new Puzzle(
+            puzzle.getQuestion(),
+            "keyboard",
+            puzzle.getHint(),
+            100
+        );
+        gameState.getCurrentRoom().setPuzzle(lethalPuzzle);
+        gameState.answerPuzzle("wrong");
+        gameState.answerPuzzle("wrong");
+        gameState.answerPuzzle("wrong");
+
+        assertEquals(0, gameState.getPlayer().getHealth());
+        assertFalse(gameState.isActive());
+        assertTrue(gameState.hasLost());
     }
 }

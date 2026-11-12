@@ -57,4 +57,23 @@ public class RoomTest {
         assertThrows(UnsupportedOperationException.class, () -> entrance.getExits().clear());
         assertEquals(crypt, entrance.getExit("north"));
     }
+
+    @Test
+    void lockedExitCannotBeUsedUntilItIsUnlocked() {
+        Room entrance = new Room("Entrance", "An entrance.");
+        Room crypt = new Room("Crypt", "A dark crypt.");
+
+        entrance.addLockedExit("north", crypt);
+
+        assertTrue(entrance.isExitLocked("north"));
+        assertTrue(entrance.unlockExit("north"));
+        assertFalse(entrance.isExitLocked("north"));
+    }
+
+    @Test
+    void unlockingAnUnknownExitReturnsFalse() {
+        Room entrance = new Room("Entrance", "An entrance.");
+
+        assertFalse(entrance.unlockExit("north"));
+    }
 }

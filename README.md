@@ -47,7 +47,7 @@ UI toolkit. The graphical version is outside the current console MVP scope.
 
 ## Technology
 
-- Java 21
+- Java 21 (LTS)
 - Maven
 - JUnit 5
 
@@ -56,5 +56,9 @@ UI toolkit. The graphical version is outside the current console MVP scope.
 The current foundation includes player health and healing rules, enemy
 behavior, player inventory access, items, inventory management, and a game
 state that supports active, victory, defeat, and new-game lifecycle states.
-The first room model and basic navigation rules are now in place. The
-console game loop, locked doors, and dungeon systems will be added next.
+The first five-room dungeon layout, connected navigation, locked exits, and
+the first three-attempt riddle puzzle, its damage trap, and basic turn-based
+attack, defense, and potion combat are now in place. Defense reduces the next
+enemy attack by half. Potions restore 25 health and are not consumed when the
+player is already at full health. The console game loop, remaining combat
+actions, and dungeon systems will be added next.
